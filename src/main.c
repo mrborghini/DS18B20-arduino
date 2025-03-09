@@ -4,6 +4,8 @@
 
 // Set the clock speed matching the board.
 #define F_CPU 16000000UL
+// If you want to enable the debug LED set it to 1
+#define DEBUG_LED 0
 
 // The bytes we're sending.
 #define DS18B20_PIN PD5
@@ -211,6 +213,11 @@ void init_led(void)
 
 void toggle_led(void)
 {
+    if (DEBUG_LED == 0)
+    {
+        return;
+    }
+
     if (led_on)
     {
         PORTB = PORTB & ~(1 << PORTB5);
