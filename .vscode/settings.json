@@ -1,0 +1,9 @@
+{
+    "C_Cpp.default.includePath": [
+        "C:\\msys64\\ucrt64"
+    ],
+    "files.associations": {
+        "setbaud.h": "c",
+        "delay.h": "c"
+    }
+}
