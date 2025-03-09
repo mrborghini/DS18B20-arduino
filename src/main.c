@@ -2,13 +2,18 @@
 #include <util/delay.h>
 #include <stdio.h>
 
+// Set the clock speed matching the board.
 #define F_CPU 16000000UL
-#define DS18B20_PIN PD5
 
+// The bytes we're sending.
+#define DS18B20_PIN PD5
 #define DS18B20_CMD_CONVERT_TEMP 0x44
 #define DS18B20_CMD_READ_SCRATCHPAD 0xBE
 #define DS18B20_CMD_WRITE_SCRATCHPAD 0x4E
 #define DS18B20_CMD_SKIP_ROM 0xCC
+
+// The state of the LED for debugging.
+int led_on = 0;
 
 // Function to initialize UART communication
 void serial_init(int baud_rate)
@@ -50,6 +55,7 @@ void serial_print(const char *str)
     while (*str)
     {
         uart_transmit(*str++);
+        // Add a very short delay to prevent the chars fucking up.
         _delay_ms(1);
     }
 }
@@ -84,6 +90,7 @@ uint8_t DS18B20_ReadBit(void)
 {
     uint8_t bit = 0;
 
+    // I hate this code, but it works.
     // Set pin as output and pull it low for 1µs to signal a read
     DDRD |= (1 << DS18B20_PIN);   // Set pin as output
     PORTD &= ~(1 << DS18B20_PIN); // Pull low
@@ -197,8 +204,6 @@ uint16_t DS18B20_ReadTemperature(void)
     return temperature;
 }
 
-int is_on = 0;
-
 void init_led(void)
 {
     DDRB = DDRB | (1 << DDB5);
@@ -206,15 +211,15 @@ void init_led(void)
 
 void toggle_led(void)
 {
-    if (is_on)
+    if (led_on)
     {
         PORTB = PORTB & ~(1 << PORTB5);
-        is_on = 0;
+        led_on = 0;
     }
     else
     {
         PORTB = PORTB | (1 << PORTB5);
-        is_on = 1;
+        led_on = 1;
     }
 }
 
